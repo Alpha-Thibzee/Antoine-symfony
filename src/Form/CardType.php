@@ -52,8 +52,8 @@ class CardType extends AbstractType
                     ])
                 ]
             ])
-            ->add('releaseDate')
-            ->add('purchaseDate')
+            ->add('release_date')
+            ->add('purchase_date')
             ->add('image', FileType::class, [
                 'data_class' => null,
                 'required' => false,

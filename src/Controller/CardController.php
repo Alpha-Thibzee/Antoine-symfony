@@ -51,7 +51,7 @@ class CardController extends AbstractController
     /**
      * @Route("/new-card", name="newcard")
      */
-    public function new(EntityManagerInterface $em, Request $request, TranslatorInterface $translator): Response
+    public function new(EntityManagerInterface $em, Request $request): Response
     {
         $card = new Card();
         $form = $this->createForm(CardType::class, $card);
@@ -63,7 +63,7 @@ class CardController extends AbstractController
 
             try{
                 $em->flush();
-                $this->addFlash('success', $translator->trans('article_creation_succes'));
+                $this->addFlash('success', 'Carte créée avec succès !');
             }catch(Exception $e){
                 $this->addFlash('danger', 'Echec lors de la carte !');
                 return $this->redirectToRoute('newcard');
