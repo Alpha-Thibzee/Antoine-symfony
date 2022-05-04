@@ -5,17 +5,17 @@
 {% block title %}Accueil{% endblock %}
 
 {% block body %}
-<h1 class="title">Liste des cartes</h1>
+<div class="container">
+<h1 class="title my-5">Liste des cartes</h1>
 
 {% for card in cards %}
 
 <div class="card mb-3">
   <h3 class="card-header">{{ card.name}}</h3>
   <div class="card-body">
-    <h5 class="card-title">{{ card.name}}</h5>
-
+    <h5 class="card-title">Voici la {{ card.name}}</h5>
+ <img class="border" width="200" height="200" src="{{ asset('assets/images/' ~ card.image ) }}" alt="Image de la carte">
   </div>
-  <img class="img-thumbnail" src="{{ asset('assets/images/' ~ card.image ) }}" alt="Image de la carte">
   <div class="card-body">
     <p class="card-text">{{card.description}}</p>
   </div>
@@ -24,14 +24,21 @@
     <li class="list-group-item">Exemplaire : {{card.example}}</li>
     <li class="list-group-item">Date de sortie : {{ card.releaseDate|date('d/m/Y')}}</li>
     <li class="list-group-item">Date d'achat : {{ card.purchaseDate|date('d/m/Y')}}</li>
+    {% if card.isOnSale == true %}
+    <li class="list-group-item">En vente : oui </li>
+    {% else %}
+    <li class="list-group-item">En vente : non </li>
+    {% endif %}
   </ul>
   <div class="card-body">
     <a href="#" class="card-link">Card link</a>
     <a href="#" class="card-link">Another link</a>
+  </div>
   </div>
 
 {#<a href="{{ path('showcard', {id:card.id})}}">Voir la carte</a>#}
 
 
 {% endfor %}
+</div>
 {% endblock %}

@@ -19,4 +19,15 @@ class CardController extends AbstractController
             'cards' => $cards,
         ]);
     }
+
+    /**
+     * @Route("/new-card", name="newcard")
+     */
+    public function new(CardRepository $repo): Response
+    {
+        $cards = $repo->findAll();
+        return $this->render('card/list.html.twig', [
+            'cards' => $cards,
+        ]);
+    }
 }
