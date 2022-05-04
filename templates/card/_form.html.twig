@@ -1,0 +1,14 @@
+{{ form_start(form) }}
+    {{ form_row(form.name, {'attr':{'class':'form-control'}, 'label':'Titre : '}) }}
+    {{ form_row(form.description, {'attr':{'class':'form-control'}, 'label':'Description : '}) }}
+    {{ form_row(form.price, {'attr':{'class':'form-control'}, 'label':'Prix : '}) }}
+    {{ form_row(form.example, {'attr':{'class':'form-control'}, 'label':'Nombre d\'exemplaire : '}) }}
+    {{ form_row(form.purchaseDate, {'attr' : {'class' : 'mt-2 mx-2'}, 'label' : 'Achetée le : ' })}}
+     {{ form_row(form.releaseDate, {'attr' : {'class' : 'mt-2 mx-2'}, 'label' : 'Sortie le : ' })}}
+    {{ form_row(form.image, {'attr':{'class':'form-control'}, 'label':'Image de la carte :' }) }}
+    {{ form_row(form.isOnSale, {'attr':{'class':'form-check-input'}, 'label':'La carte est-elle en vente ?'}) }}
+    
+    
+
+<button type="submit" class="btn btn-primary">Envoyer</button>
+{{ form_end(form) }}

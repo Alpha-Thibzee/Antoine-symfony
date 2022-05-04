@@ -7,6 +7,9 @@
 {% block body %}
 <div class="container">
 <h1 class="title my-5">Liste des cartes</h1>
+{{ form_start(filter) }}
+    {{ form_widget(filter) }}
+    {{ form_end(filter) }}
 
 {% for card in cards %}
 
@@ -31,8 +34,8 @@
     {% endif %}
   </ul>
   <div class="card-body">
-    <a href="#" class="card-link">Card link</a>
-    <a href="#" class="card-link">Another link</a>
+    <a class="btn btn-secondary" href="{{ path('showcard', {id: card.id}) }}">Voir la carte</a>
+    
   </div>
   </div>
 

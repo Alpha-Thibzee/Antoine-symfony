@@ -47,6 +47,23 @@ class CardRepository extends ServiceEntityRepository
         }
     }
 
+    public function filterCard( ?string $order): array
+    {
+        $query = $this->createQueryBuilder('p')
+        ->where('p.isOnSale = true');
+
+
+        if($order)
+        {
+            $query = $query->orderBy('p.price', $order);
+        }
+
+        $finalQuery = $query->getQuery()
+        ->getResult();
+
+        return $finalQuery;
+    }
+
     // /**
     //  * @return Card[] Returns an array of Card objects
     //  */
