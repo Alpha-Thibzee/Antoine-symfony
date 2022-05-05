@@ -1,6 +1,7 @@
-
-{#{{form_start(form)}}
-
-{{form_end(form)}}#}
-<p>Concernant la carte : {{name}}</p>
+<section class="container d-flex flex-column w-25  mx-auto my-auto">
+<p>Proposition de prix concernant la carte : {{ card.name }}  </p>
+<p>Prix de base de la carte : {{ card.price }} €</p>
+<p>L'offre proposé est de : {{ card.price + 10}} €</p> 
+<button type="submit" class="btn btn-outline-primary mt-2"> Envoyer </button>
+</section>
 

@@ -4,12 +4,11 @@ namespace App\Controller;
 
 use App\Entity\Card;
 use App\Form\MailerType;
-use Symfony\Component\Mime\Email;
 use App\Repository\CardRepository;
 use Symfony\Component\Mime\Address;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mailer\Transport\TransportInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,37 +16,41 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class MailerController extends AbstractController
 {
     /**
-     * @Route("/mailer/{id}", name="sendmail")
+     * @Route("/mailer/{id}", name="app_mailer")
      */
-    public function mailer(CardRepository $repo, string $id,  MailerInterface $mailer): Response
-    {   
-        
+    public function mailer(CardRepository $repo, Card $card, string $id, TransportInterface $mailer): Response
+    {
+
         $repo = $repo->findOneBy(['id' => $id]);
-        $name = $repo->getName();
-      
+        // $name = $card->getName();
+        // $price = $card->getPrice();
+
         $email = (new TemplatedEmail())
         ->from('antoinerobert@example.com')
         ->to('antoinerobert43@example.com')
-        ->subject('Commande de machin envoyé !')
+        ->subject('Proposition de prix')
 
         // path of the Twig template to render
-      // ->htmlTemplate('mailer/index.html.twig')
+       ->htmlTemplate('mailer/index.html.twig')
 
         // pass variables (name => value) to the template
         ->context([
-            'name' => $name
+            'card' => $card,
+           
         ])
     ;
 
         $mailer->send($email);
 
-        return $this->render('mailer/index.html.twig',);
-      
+        //return $this->render('mailer/index.html.twig', [
+            //'card' => $card,
+            //'price' => $price
+            //'form' => $form->createView()
+        //]);
 
-        //return $this->redirectToRoute('homecard');
+        return $this->redirectToRoute('homecard');
 
 
-        
+
     }
 }
-
