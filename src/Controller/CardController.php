@@ -5,6 +5,7 @@ namespace App\Controller;
 use Exception;
 use App\Entity\Card;
 use App\Form\CardType;
+use App\Service\Upload;
 use App\Form\FilterType;
 use App\Repository\CardRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -49,16 +50,32 @@ class CardController extends AbstractController
     }
 
     /**
-     * @Route("/new-card", name="newcard")
+     * @Route("/admin/new-card", name="newcard")
      */
-    public function new(EntityManagerInterface $em, Request $request): Response
+    public function new( EntityManagerInterface $em, Request $request, Upload $fileUploader): Response
     {
         $card = new Card();
+        $oldImage = $card->getImage();
         $form = $this->createForm(CardType::class, $card);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()){
             
+            if($card->getImage() === null){
+                $card->setImage('default.jpg');
+            }else{
+                $imageFile = $form->get('image')->getData();
+                if($imageFile){
+                    if($imageFile !== 'default.jpg'){
+                        $fileUploader->fileDelete($oldImage);
+                    }
+                    $imageFileName = $fileUploader->upload($imageFile);
+                    $card->setImage($imageFileName);
+                }
+            }
+
+            $card->setName($form->getData()->getName());
+
             $em->persist($card);
 
             try{
@@ -81,13 +98,28 @@ class CardController extends AbstractController
     /**
      * @Route("/modify-card/{id}", name="editcard")
      */
-    public function edit(Card $card, Request $request, EntityManagerInterface $em): Response
+    public function edit(Card $card, Request $request, EntityManagerInterface $em, Upload $fileUploader): Response
     {
-     
+        $oldImage = $card->getImage();
         $form = $this->createForm(CardType::class, $card);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()){
+
+            if($card->getImage() === null){
+                $card->setImage('default.jpg');
+            }else{
+                $imageFile = $form->get('image')->getData();
+                if($imageFile){
+                    if($imageFile !== 'default.jpg'){
+                        $fileUploader->fileDelete($oldImage);
+                    }
+                    $imageFileName = $fileUploader->upload($imageFile);
+                    $card->setImage($imageFileName);
+                }
+            }
+
+            $card->setName($form->getData()->getName());
 
             try{
                 $em->flush();
