@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Card;
 use App\Form\MailerType;
 use App\Repository\CardRepository;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Mime\Address;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,37 +19,53 @@ class MailerController extends AbstractController
     /**
      * @Route("/mailer/{id}", name="app_mailer")
      */
-    public function mailer(CardRepository $repo, Card $card, string $id, TransportInterface $mailer): Response
+    public function mailer(Request $request, CardRepository $repo, Card $card, string $id, TransportInterface $mailer): Response
     {
-
+        $form = $this->createForm(MailerType::class);
+        $form->handleRequest($request);
         $repo = $repo->findOneBy(['id' => $id]);
-        // $name = $card->getName();
-        // $price = $card->getPrice();
+        $name = $card->getName();
+        $price = $card->getPrice();
 
-        $email = (new TemplatedEmail())
+        if($form->isSubmitted() && $form->isValid()){
+            //$form = $form->getData();
+            //$price = $mailForm['price']->getData();
+            
+            $email = (new TemplatedEmail())
         ->from('antoinerobert@example.com')
         ->to('antoinerobert43@example.com')
         ->subject('Proposition de prix')
+        ->text($form['message'])
 
         // path of the Twig template to render
        ->htmlTemplate('mailer/index.html.twig')
-
         // pass variables (name => value) to the template
         ->context([
             'card' => $card,
+            //'form' => $form
+            //'price' => $mailForm['price']
            
-        ])
-    ;
+        ]);
 
-        $mailer->send($email);
+            $mailer->send($email);
 
-        //return $this->render('mailer/index.html.twig', [
-            //'card' => $card,
-            //'price' => $price
-            //'form' => $form->createView()
-        //]);
+            return $this->redirectToRoute('homecard');
+        }
 
-        return $this->redirectToRoute('homecard');
+        
+       
+
+        
+
+        return $this->render('mailer/index.html.twig', [
+            'form' => $form->createView(),
+            'card' => $card,
+            'price' => $price,
+            'name' => $name
+            
+        ]);
+
+        //return $this->redirectToRoute('homecard');
 
 
 
