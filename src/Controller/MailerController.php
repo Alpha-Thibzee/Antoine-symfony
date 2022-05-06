@@ -2,72 +2,64 @@
 
 namespace App\Controller;
 
+
 use App\Entity\Card;
 use App\Form\MailerType;
+use App\Form\MailFormType;
 use App\Repository\CardRepository;
-use Symfony\Component\Mime\Email;
-use Symfony\Component\Mime\Address;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Mailer\Transport\TransportInterface;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Mailer\Transport\TransportInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 class MailerController extends AbstractController
 {
-    /**
-     * @Route("/mailer/{id}", name="app_mailer")
-     */
-    public function mailer(Request $request, CardRepository $repo, Card $card, string $id, TransportInterface $mailer): Response
+    #[Route('/mailer/{id}', name: 'mailer')]
+    public function index(CardRepository $card , Card $cards ,Request $request, TransportInterface $mailer, $id)
     {
+        $card->findOneBy(['id' => $id]);
+        $value = $cards->getPrice()+1;
+        $name = $cards->getName();
         $form = $this->createForm(MailerType::class);
+
         $form->handleRequest($request);
-        $repo = $repo->findOneBy(['id' => $id]);
-        $name = $card->getName();
-        $price = $card->getPrice();
 
-        if($form->isSubmitted() && $form->isValid()){
-            //$form = $form->getData();
-            //$price = $mailForm['price']->getData();
+
+        if($form->isSubmitted() && $form->isValid()) {
+
+            $contactFormData = $form->getData();
             
-            $email = (new TemplatedEmail())
-        ->from('antoinerobert@example.com')
-        ->to('antoinerobert43@example.com')
-        ->subject('Proposition de prix')
-        ->text($form['message'])
+            $message = (new TemplatedEmail())
+                ->from('test@test.Fr')
+                ->to('alexis@carte-collection.com')
+                ->subject('Nouvelle propositon d\'achat pour la carte '.$name.' d\'une valeur de '. $contactFormData['value'].'€')
+                ->text(
+                    $contactFormData['message'],
+                    'text/plain')
+                ->context([
+                    'message' => $contactFormData["message"]
+                ]);
 
-        // path of the Twig template to render
-       ->htmlTemplate('mailer/index.html.twig')
-        // pass variables (name => value) to the template
-        ->context([
-            'card' => $card,
-            //'form' => $form
-            //'price' => $mailForm['price']
-           
-        ]);
+                    try {
+                        $mailer->send($message);
+                        $this->addFlash('success', 'Votre proposition d\'offre pour la carte "'.$name.'" à bien été envoyé');
+                    } catch (TransportExceptionInterface $e) {
+                        $this->addFlash('error', 'Votre proposition d\'offre pour la carte "'.$name.'" n\'a pas été envoyé');
+                        return $this->redirectToRoute('homepage');
+                    }
 
-            $mailer->send($email);
 
             return $this->redirectToRoute('homecard');
         }
-
         
-       
-
-        
-
         return $this->render('mailer/index.html.twig', [
-            'form' => $form->createView(),
-            'card' => $card,
-            'price' => $price,
-            'name' => $name
-            
+            'name' => $name,
+            'value' => $value,
+            'form' => $form->createView()
         ]);
-
-        //return $this->redirectToRoute('homecard');
-
-
-
     }
+    
 }

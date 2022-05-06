@@ -1,6 +1,11 @@
+{% extends 'base.html.twig' %}
 
+{% block title %}Mail{% endblock %}
+
+{% block body %}
     {{ form_start(form)}}
-    {{ form_row(form.price)}}
-    {{ form_row(form.message)}}
+    {{ form_row(form.value, {'attr': {'class': 'form-control', 'value': value, 'min': value}}) }}
+    {{ form_row(form.message, {'attr': {'class': 'form-control'}}) }}
+    <button class="btn btn-outline-dark mt-2" type="submit">Envoyer</button>
     {{ form_end(form)}}
-
+{% endblock %}

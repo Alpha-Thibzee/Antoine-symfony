@@ -2,35 +2,31 @@
 
 namespace App\Form;
 
-use App\Entity\Card;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
 class MailerType extends AbstractType
 {
-    public function buildForm(/*Card $nard,*/ FormBuilderInterface $builder, array $options): void
+    public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-        ->add('price', IntegerType::class, [
-               
-            'label' => 'Votre proposition de prix concernant la carte',
-            'attr' => ['min' => ""],
-        ])
-        ->add('message', TextType::class, [
-               
-            'label' => 'Votre message', 
-        ])
-        ->add('Envoyer', SubmitType::class)
-        ;
+            ->add('value', IntegerType::class, [
+                'label' => 'Prix proposé',
+                'attr' => ['min' => ""]
+            ])
+            ->add('message', TextareaType::class, [
+                'attr' => ['rows' => 5],
+            ])
         
+        ;
     }
 
-    public function configureOptions(OptionsResolver $resolver): void
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             // Configure your form options here
